@@ -2,22 +2,13 @@
     include "service/database.php"; 
     $message = "";
     if(isset($_POST["tombol"])){
-        
-            foreach($_POST['menu'] as $a ){
-                $menu = $a;
-            }
-            foreach($_POST['size'] as $a ){
-                $size = $a;
-            }
-            foreach($_POST['hotIce'] as $a ){
-                $hotIce = $a;
-            }
-            foreach($_POST['sweet'] as $a ){
-                $sweet = $a;
-            }
+            $menu = isset($_POST['menu']) ? $_POST['menu'][0] : 'None';
+            $hotIce = isset($_POST['hotIce']) ? $_POST['hotIce'][0] : 'None';
+            $size = isset($_POST['size']) ? $_POST['size'][0] : 'None';
+            $sweet = isset($_POST['sweet']) ? $_POST['sweet'][0] : 'None';
             $dairy = isset($_POST["dairy"]) ? implode(", ", $_POST["dairy"]) : 'None'; // funsgi implode merubah array jadi string
             $topping = isset($_POST["topping"]) ? implode(", ", $_POST["topping"]) : 'None';
-            $note = isset($_POST["note"]) ? $_POST["note"] : 'None';
+            $note = isset($_POST["note"]) && !empty(trim($_POST["note"])) ? $_POST["note"] : 'None';
             $sql = "INSERT INTO `order` (`Menu`, `hotIce`, `size`, `sweetness`, `dairy`, `topping`, `note`) 
                     VALUES ('$menu', '$hotIce','$size','$sweet','$dairy','$topping','$note')"; 
             if($db->query($sql)){
@@ -48,7 +39,7 @@
             <div class="menu">
                 <label for="menu" class="tulisan">Menu</label>
                 <br>
-                <select class="form-select" aria-label="Small select example" name="menu[]">
+                <select class="form-select" aria-label="Small select example" name="menu[]" required>
                     <option selected disabled>Menu</option>
                     <option name="menu[]" value="Americano" >Americano</option>
                     <option name="menu[]" value="Mochaccino">Mochaccino</option>

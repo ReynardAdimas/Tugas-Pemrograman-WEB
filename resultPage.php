@@ -135,22 +135,22 @@
                                     $a = trim($a); // memotong spasi tiap elemen
                                     if($a== "Caramel Sauce")
                                     {
-                                        $ta = 3000;
+
                                         $hargaTopping += 3000;
                                     }
                                     else if($a == "Caramel Crumble")
                                     {
-                                        $tb = 4000;
+                                      
                                         $hargaTopping += 4000;
                                     }
                                     else if($a== "Choco Granola")
                                     {
-                                        $tc = 4000;
+                                      
                                         $hargaTopping += 4000;
                                     }
                                     else if($a== "Sea Salt Cream")
                                     {
-                                        $td = 5000;
+                                       
                                         $hargaTopping += 5000;
                                     }
                                             

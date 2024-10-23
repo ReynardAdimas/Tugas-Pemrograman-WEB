@@ -9,6 +9,33 @@
         {
             $data  = $result->fetch_assoc();
         } 
+    } 
+    $message = "";
+    if (isset($_POST["tombolUpdate"])) {
+        $menu = isset($_POST['menu']) ? $_POST['menu'][0] : 'None';
+        $hotIce = isset($_POST['hotIce']) ? $_POST['hotIce'][0] : 'None';
+        $size = isset($_POST['size']) ? $_POST['size'][0] : 'None';
+        $sweet = isset($_POST['sweet']) ? $_POST['sweet'][0] : 'None';
+        $dairy = isset($_POST["dairy"]) ? implode(", ", $_POST["dairy"]) : 'None';
+        $topping = isset($_POST["topping"]) ? implode(", ", $_POST["topping"]) : 'None';
+        $note = isset($_POST["note"]) && !empty(trim($_POST["note"])) ? $_POST["note"] : 'None'; 
+        $updateSql = "UPDATE `order` SET 
+            `Menu` = '$menu', 
+            `hotIce` = '$hotIce', 
+            `size` = '$size', 
+            `sweetness` = '$sweet', 
+            `dairy` = '$dairy', 
+            `topping` = '$topping', 
+            `note` = '$note' 
+        WHERE `id_order` = '$id';";
+    
+        if ($db->query($updateSql)) {
+            $message = "Update Berhasil"; 
+            sleep(1); 
+            header("location: index.php");
+        } else {
+            $message = "Update Gagal";  
+        }
     }
 ?>
 
@@ -23,7 +50,7 @@
 </head>
 <body style="background-color: #ECDFCC;"> 
     <?php include "layout/nav.html"?>
-    <form action="order.php" method="post">
+    <form action="editPage.php?id_order=<?= $id ?>" method="post">
         <div class="container rounded title ">
             <h1>Edit Your Order</h1>
             <!-- Menu -->
@@ -31,7 +58,7 @@
                 <label for="menu" class="tulisan">Menu</label>
                 <br>
                 <select class="form-select" aria-label="Small select example" name="menu[]">
-                    <option selected disabled><?= $data["Menu"]?></option>
+                    <option selected><?= $data["Menu"]?></option>
                     <option name="menu[]" value="Americano" >Americano</option>
                     <option name="menu[]" value="Mochaccino">Mochaccino</option>
                     <option name="menu[]" value="Hazelnut Latte">Hazelnut Latte</option>
@@ -55,7 +82,7 @@
                     {?>
                             <input type="radio" id="hot" name="hotIce[]" value="Hot"> 
                             <label for="hot" class="pilihan">Hot</label>
-                            <input type="radio" id="ice" name="hotIce[]" value="Ice> 
+                            <input type="radio" id="ice" name="hotIce[]" value="Ice" checked> 
                             <label for="ice" class="pilihan">Ice</label>
                     <?php }
                 ?>
@@ -64,54 +91,145 @@
             <div class="size">
                 <label for="size" class="tulisan">Size</label>
                 <br>
-                <input type="radio" id="regular" name="size[]" value="Regular" checked> 
-                <label for="regular" class="pilihan">Regular</label>
-                <input type="radio" id="large" name="size[]" value="Large"> 
-                <label for="large" class="pilihan">Large</label>
+                <?php 
+                    if($data["size"] == "Reguler")
+                    {?>
+                        <input type="radio" id="regular" name="size[]" value="Regular" checked> 
+                        <label for="regular" class="pilihan">Regular</label>
+                        <input type="radio" id="large" name="size[]" value="Large"> 
+                        <label for="large" class="pilihan">Large</label>        
+                    <?php }
+                    else 
+                    {?>
+                        <input type="radio" id="regular" name="size[]" value="Regular" > 
+                        <label for="regular" class="pilihan">Regular</label>
+                        <input type="radio" id="large" name="size[]" value="Large" checked> 
+                        <label for="large" class="pilihan">Large</label>
+                    <?php }
+                ?>
             </div> 
             <!-- Sweetness Level --> 
             <div class="sweet">
                 <label for="sweet" class="tulisan">Sweetness Level</label>
                 <br>
-                <input type="radio" id="normal" name="sweet[]" value="Normal" checked> 
-                <label for="normal" class="pilihan">Normal Sweet</label>
-                <input type="radio" id="less" name="sweet[]" value="Less"> 
-                <label for="less" class="pilihan">Less Sweet</label>
+                <?php 
+                    if($data["sweetness"] == "Normal")
+                    {?>
+                        <input type="radio" id="normal" name="sweet[]" value="Normal" checked> 
+                        <label for="normal" class="pilihan">Normal Sweet</label>
+                        <input type="radio" id="less" name="sweet[]" value="Less"> 
+                        <label for="less" class="pilihan">Less Sweet</label>
+                    <?php }
+                    else 
+                    { ?>
+                        <input type="radio" id="normal" name="sweet[]" value="Normal" > 
+                        <label for="normal" class="pilihan">Normal Sweet</label>
+                        <input type="radio" id="less" name="sweet[]" value="Less" checked> 
+                        <label for="less" class="pilihan">Less Sweet</label>
+                    <?php }
+                ?>
             </div>
             <!-- Dairy -->
             <div class="dairy" >
                 <label for="dairy" class="tulisan">Dairy <span>optional</span></label> 
                 <br>
-                <input type="radio" id="milk" name="dairy[]" value="Milk"> 
-                <label for="milk" class="pilihan">Milk</label>
-                <input type="radio" id="oat" name="dairy[]" value="Oat Milk"> 
-                <label for="oat" class="pilihan">Oat Milk</label>
-                <input type="radio" id="almond" name="dairy[]" value="Almond Milk"> 
-                <label for="almond" class="pilihan">Almond Milk</label>
+                <?php 
+                    if($data["dairy"] == "Milk")
+                    { ?>
+                        <input type="radio" id="milk" name="dairy[]" value="Milk" checked> 
+                        <label for="milk" class="pilihan">Milk</label>
+                        <input type="radio" id="oat" name="dairy[]" value="Oat Milk"> 
+                        <label for="oat" class="pilihan">Oat Milk</label>
+                        <input type="radio" id="almond" name="dairy[]" value="Almond Milk"> 
+                        <label for="almond" class="pilihan">Almond Milk</label>
+                    <?php }
+                    else if($data["dairy"] == "Oat Milk")
+                    { ?>
+                        <input type="radio" id="milk" name="dairy[]" value="Milk" > 
+                        <label for="milk" class="pilihan">Milk</label>
+                        <input type="radio" id="oat" name="dairy[]" value="Oat Milk" checked> 
+                        <label for="oat" class="pilihan">Oat Milk</label>
+                        <input type="radio" id="almond" name="dairy[]" value="Almond Milk"> 
+                        <label for="almond" class="pilihan">Almond Milk</label>
+                    <?php }
+                    else if($data["dairy"] == "Almond Milk") 
+                    { ?>
+                        <input type="radio" id="milk" name="dairy[]" value="Milk" > 
+                        <label for="milk" class="pilihan">Milk</label>
+                        <input type="radio" id="oat" name="dairy[]" value="Oat Milk" > 
+                        <label for="oat" class="pilihan">Oat Milk</label>
+                        <input type="radio" id="almond" name="dairy[]" value="Almond Milk" checked> 
+                        <label for="almond" class="pilihan">Almond Milk</label>
+                    <?php }
+                    else 
+                    { ?>
+                        <input type="radio" id="milk" name="dairy[]" value="Milk" > 
+                        <label for="milk" class="pilihan">Milk</label>
+                        <input type="radio" id="oat" name="dairy[]" value="Oat Milk" > 
+                        <label for="oat" class="pilihan">Oat Milk</label>
+                        <input type="radio" id="almond" name="dairy[]" value="Almond Milk"> 
+                        <label for="almond" class="pilihan">Almond Milk</label>
+                    <?php }
+                ?>
+                
             </div>
             <!-- Topping -->
             <div class="topping">
                 <label for="topping" class="tulisan">Topping</label>
                 <br>
-                <input type="checkbox" id="caramel" name="topping[]" value="Caramel Sauce"> 
+                <?php
+                    $status1 = "";
+                    $status2 = "";
+                    $status3 = ""; 
+                    $status4 = "";
+                    $data_array = explode("," , $data["topping"]); 
+                    foreach($data_array as $a)
+                    {
+                        $a = trim($a); 
+                        if($a == "Caramel Sauce")
+                        {
+                            $status1 = "checked";
+                        }
+                        else if($a == "Caramel Crumble")
+                        {
+                            $status2 = "checked";
+                        }
+                        else if($a == "Choco Granola")
+                        {
+                            $status3 = "checked";
+                        }
+                        else if($a == "Sea Salt Cream")
+                        {
+                            $status4 = "checked";
+                        }
+                        else 
+                        {
+                            $status1 = "";
+                            $status2 = "";
+                            $status3 = ""; 
+                            $status4 = "";
+                        }
+                    } 
+                ?>
+                <input type="checkbox" id="caramel" name="topping[]" value="Caramel Sauce" <?= $status1 ?>> 
                 <label for="caramel" class="pilihan">Caramel Sauce</label>
-                <input type="checkbox" id="crumble" name="topping[]" value="Caramel Crumble"> 
+                <input type="checkbox" id="crumble" name="topping[]" value="Caramel Crumble" <?= $status2 ?>> 
                 <label for="crumble" class="pilihan">Caramel Crumble</label>
-                <input type="checkbox" id="choco" name="topping[]" value="Choco Granola"> 
+                <input type="checkbox" id="choco" name="topping[]" value="Choco Granola" <?= $status3 ?>> 
                 <label for="choco" class="pilihan">Choco Granola</label>
-                <input type="checkbox" id="sea" name="topping[]" value="Sea Salt Cream"> 
+                <input type="checkbox" id="sea" name="topping[]" value="Sea Salt Cream" <?= $status4 ?>> 
                 <label for="sea" class="pilihan">Sea Salt Cream</label>
             </div>
             <!-- Note -->
             <div class="note">
                 <label for="note" class="tulisan">Note</label>
                 <br>
-                <textarea class="form-control" placeholder="Write additional note here" id="note" name="note"></textarea>
+                <textarea class="form-control" placeholder="" id="note" name="note"><?= $data["note"] ?></textarea>
             </div>
             <br>
             <!-- button submit -->
-            <input type="submit" value="Update" class="tombol" name="tombol">
-            <i><?= $message?></i>
+            <input type="submit" value="Update" class="tombol" name="tombolUpdate">
+            <i><?= $message ?></i>
         </div>
     </form> 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
